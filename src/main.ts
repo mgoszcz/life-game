@@ -1,68 +1,93 @@
-import * as readline from "readline";
 import { render } from "./renderer";
+import { state } from "./state";
+import { gameConfig, initializeConfig } from "./config";
+import { nextGeneration } from "./life";
+import { setupControls } from "./controls";
 
-const grid: boolean[][] = [];
+function enableGameInput() {
+  process.stdin.setRawMode(true);
+  process.stdin.resume();
+  process.stdin.setEncoding("utf8");
+}
 
-export type GameConfig = {
-  width: number;
-  height: number;
-  aliveChance: number; // np. 0.25 = 25%
-};
+function disableGameInput() {
+  if (process.stdin.isTTY) {
+    process.stdin.setRawMode(false);
+  }
+}
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+function initializeControls() {
+  setupControls({
+    quit: () => {
+      state.isRunning = false;
+      process.exit(0);
+    },
 
-function ask(question: string): Promise<string> {
-  return new Promise((resolve) => {
-    rl.question(question, resolve);
+    togglePause: () => {
+      state.isRunning = !state.isRunning;
+    },
+
+    faster: () => {
+      state.speed = Math.max(20, state.speed - 20);
+    },
+
+    slower: () => {
+      state.speed = Math.min(1000, state.speed + 20);
+    },
+
+    reset: () => {
+      state.resetRequested = true;
+    },
+
+    newGame: () => {
+      state.newGameRequested = true;
+    },
   });
 }
 
-async function readConfig(): Promise<GameConfig> {
-  const widthInput = await ask("Grid width [60]: ");
-  const heightInput = await ask("Grid height [30]: ");
-  const aliveInput = await ask("Alive cells % [25]: ");
-  rl.close();
-  const width = Number(widthInput || 60);
-  const height = Number(heightInput || 30);
-  const alivePercent = Number(aliveInput || 25);
-
-  return {
-    width,
-    height,
-    aliveChance: alivePercent / 100,
-  };
-}
-
-function initialize(config: GameConfig) {
-  for (let y = 0; y < config.height; y++) {
+function initializeGrid() {
+  state.grid = [];
+  state.generation = 0;
+  for (let y = 0; y < gameConfig.height; y++) {
     const line = [];
-    for (let x = 0; x < config.width; x++) {
-      if (Math.random() < config.aliveChance) {
+    for (let x = 0; x < gameConfig.width; x++) {
+      if (Math.random() < gameConfig.aliveChance) {
         line.push(true);
       } else {
         line.push(false);
       }
     }
-    grid.push(line);
+    state.grid.push(line);
   }
 }
 
 async function main() {
-  console.clear();
-  const config = await readConfig();
-  console.log("Config:", config);
-  initialize(config);
-  render(grid, config);
-  while (1) {}
+  initializeControls();
+  while (1) {
+    console.clear();
+    disableGameInput();
+    await initializeConfig();
+    enableGameInput();
+    console.log("Config:", gameConfig);
+    while (1) {
+      state.resetRequested = false;
+      state.newGameRequested = false;
+      initializeGrid();
+      render();
+      while (!state.resetRequested && !state.newGameRequested) {
+        await new Promise((resolve) => setTimeout(resolve, state.speed));
+        if (state.isRunning) {
+          nextGeneration();
+          state.generation++;
+          render();
+        }
+      }
 
-  // tutaj dopiero:
-
-  // const grid = createRandomGrid(config.width, config.height, config.aliveChance);
-
-  // startGameLoop(grid);
+      if (state.newGameRequested) {
+        break;
+      }
+    }
+  }
 }
 
 main();
