@@ -1,7 +1,7 @@
 import { render } from "./renderer";
-import { state } from "./state";
+import { state } from "../core/state";
 import { gameConfig, initializeConfig } from "./config";
-import { nextGeneration } from "./life";
+import { nextGeneration } from "../core/life";
 import { setupControls } from "./controls";
 
 function enableGameInput() {

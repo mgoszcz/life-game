@@ -1,5 +1,5 @@
 import { gameConfig } from "./config";
-import { state } from "./state";
+import { state } from "../core/state";
 
 export const render = () => {
   let output = `CONWAY LIFE SIMULATOR\nGRID: ${gameConfig.width}x${gameConfig.height}\nGENERATION: ${state.generation}\nCYCLE TIME: ${state.speed} ms\n\n`;
