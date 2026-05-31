@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Conway Life</title>
+  </head>
+  <body>
+    <div class="app">
+      <h1>CONWAY LIFE SIMULATOR</h1>
+
+      <div class="panel">
+        <label>
+          WIDTH:
+          <input id="widthInput" type="number" value="80" min="10" max="300" />
+        </label>
+
+        <label>
+          HEIGHT:
+          <input id="heightInput" type="number" value="50" min="10" max="200" />
+        </label>
+
+        <label>
+          ALIVE CHANCE:
+          <input id="aliveInput" type="number" value="25" min="0" max="100" />
+          %
+        </label>
+
+        <button id="restartButton">RESTART</button>
+      </div>
+
+      <div class="panel">
+        <button id="resetButton">RESET</button>
+        <button id="speedUpButton">SPEED UP</button>
+        <button id="speedDownButton">SPEED DOWN</button>
+        <button id="pauseButton">PAUSE</button>
+      </div>
+
+      <div class="status">
+        <div>Current Speed: <span id="speedValue">100</span> ms</div>
+        <div>Generation: <span id="generationValue">0</span></div>
+      </div>
+
+      <canvas id="game"></canvas>
+    </div>
+
+    <script type="module" src="/src/web/main.ts"></script>
+  </body>
+</html>

@@ -1,5 +1,5 @@
-import { render } from "./renderer";
-import { state } from "../core/state";
+import { renderShell } from "./renderer";
+import { createRandomGrid, state } from "../core/state";
 import { gameConfig, initializeConfig } from "./config";
 import { nextGeneration } from "../core/life";
 import { setupControls } from "./controls";
@@ -46,19 +46,8 @@ function initializeControls() {
 }
 
 function initializeGrid() {
-  state.grid = [];
   state.generation = 0;
-  for (let y = 0; y < gameConfig.height; y++) {
-    const line = [];
-    for (let x = 0; x < gameConfig.width; x++) {
-      if (Math.random() < gameConfig.aliveChance) {
-        line.push(true);
-      } else {
-        line.push(false);
-      }
-    }
-    state.grid.push(line);
-  }
+  createRandomGrid(gameConfig);
 }
 
 async function main() {
@@ -73,13 +62,13 @@ async function main() {
       state.resetRequested = false;
       state.newGameRequested = false;
       initializeGrid();
-      render();
+      renderShell();
       while (!state.resetRequested && !state.newGameRequested) {
         await new Promise((resolve) => setTimeout(resolve, state.speed));
         if (state.isRunning) {
           nextGeneration();
           state.generation++;
-          render();
+          renderShell();
         }
       }
 

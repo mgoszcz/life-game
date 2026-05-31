@@ -1,10 +1,5 @@
 import * as readline from "readline";
-
-type GameConfig = {
-  width: number;
-  height: number;
-  aliveChance: number; // np. 0.25 = 25%
-};
+import { GameConfig } from "../core/types";
 
 export async function readConfig(): Promise<GameConfig> {
   const widthInput = await ask("Grid width [60]: ");
