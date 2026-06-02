@@ -5,7 +5,7 @@ const OFFSET_X = 0;
 const OFFSET_Y = 0;
 
 export const renderCanvas = (context: CanvasRenderingContext2D) => {
-  console.log(gameConfig.width, gameConfig.height);
+  // console.log(gameConfig.width, gameConfig.height);
   context.fillStyle = "#000000";
   context.fillRect(0, 0, context.canvas.width, context.canvas.height);
   for (let y = 0; y < gameConfig.height; y++) {
