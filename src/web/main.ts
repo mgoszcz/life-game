@@ -27,10 +27,16 @@ const generationValue =
 const canvas = document.querySelector<HTMLCanvasElement>("#game")!;
 const ctx = canvas.getContext("2d")!;
 
-ctx.canvas.width = webGameConfig.width * 10;
-ctx.canvas.height = webGameConfig.height * 10;
+gameLoop();
 
-resetLoop();
+async function gameLoop() {
+  while (1) {
+    state.newGameRequested = false;
+    ctx.canvas.width = webGameConfig.width * 10;
+    ctx.canvas.height = webGameConfig.height * 10;
+    await resetLoop();
+  }
+}
 
 async function resetLoop() {
   while (!state.newGameRequested) {
@@ -71,4 +77,21 @@ speedDownButton.addEventListener("click", () => {
 
 pauseButton.addEventListener("click", () => {
   state.isRunning = !state.isRunning;
+});
+
+restartButton.addEventListener("click", () => {
+  state.newGameRequested = true;
+  state.generation = 0;
+  const newWidth = parseInt(widthInput.value, 10);
+  if (!isNaN(newWidth) && newWidth > 0) {
+    webGameConfig.width = newWidth;
+  }
+  const newHeight = parseInt(heightInput.value, 10);
+  if (!isNaN(newHeight) && newHeight > 0) {
+    webGameConfig.height = newHeight;
+  }
+  const newAliveChance = parseFloat(aliveInput.value);
+  if (!isNaN(newAliveChance) && newAliveChance >= 0 && newAliveChance <= 1) {
+    webGameConfig.aliveChance = newAliveChance;
+  }
 });

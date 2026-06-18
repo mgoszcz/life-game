@@ -6,30 +6,78 @@
   </head>
   <body>
     <div class="app">
-      <h1>CONWAY LIFE SIMULATOR</h1>
-
       <div class="control-panel">
-        <div class="panel-header">CONWAY LIFE COMPUTER MK-I</div>
+        <div class="screw bottom-left"></div>
+        <div class="screw bottom-right"></div>
 
-        <div class="panel-row">
-          <label>WIDTH</label>
-          <input type="number" />
-          <label>HEIGHT</label>
-          <input type="number" />
-          <label>ALIVE CELLS [%]</label>
-          <input type="number" />
+        <div class="panel-title">LIFE COMPUTER MK-I</div>
+
+        <div class="indicator-section">
+          <div class="indicator-group">
+            <span>POWER</span>
+            <div class="indicator on" id="powerIndicator"></div>
+          </div>
+
+          <div class="indicator-group">
+            <span>PAUSE</span>
+            <div class="indicator" id="pauseIndicator"></div>
+          </div>
         </div>
 
-        <button class="retro-button">RESTART</button>
-        <button id="resetButton">RESET</button>
-        <button id="speedUpButton">SPEED UP</button>
-        <button id="speedDownButton">SPEED DOWN</button>
-        <button id="pauseButton">PAUSE</button>
+        <div class="speed-section">
+          <span>SPEED</span>
+          <div class="speed-controls">
+            <button id="speedDownButton">◀</button>
+            <span class="display" id="speedValue">100</span>
+            <button id="speedUpButton">▶</button>
+          </div>
+        </div>
+
+        <div class="config-section">
+          <div class="config-row">
+            <span>W</span>
+            <input
+              id="widthInput"
+              type="number"
+              value="80"
+              min="10"
+              max="300"
+            />
+          </div>
+
+          <div class="config-row">
+            <span>H</span>
+            <input
+              id="heightInput"
+              type="number"
+              value="50"
+              min="10"
+              max="200"
+            />
+          </div>
+
+          <div class="config-row">
+            <span>A%</span>
+            <input id="aliveInput" type="number" value="25" min="0" max="100" />
+          </div>
+        </div>
+
+        <div class="mode-section">
+          <span>MODE</span>
+          <div class="mode-selector">RANDOM</div>
+        </div>
+
+        <div class="button-section">
+          <button id="restartButton">RESTART</button>
+          <button id="resetButton">RESET</button>
+          <button id="pauseButton">PAUSE</button>
+        </div>
       </div>
 
-      <div class="status">
-        <div>Current Speed: <span id="speedValue">100</span> ms</div>
-        <div>Generation: <span id="generationValue">0</span></div>
+      <div class="screen-header">
+        <div>CONWAY LIFE SIMULATOR</div>
+        <div>GENERATION: <span id="generationValue">0</span></div>
+        <div>ALIVE COUNT: <span id="aliveCountValue">0</span></div>
       </div>
 
       <canvas id="game"></canvas>
