@@ -2,11 +2,15 @@ import { state } from "./state";
 
 export const nextGeneration = () => {
   const newGrid: boolean[][] = [];
+  state.liveCells = 0;
   for (let y = 0; y < state.grid.length; y++) {
     const line = [];
     for (let x = 0; x < state.grid[y].length; x++) {
       const neighbours = countNeighbours(x, y);
       const nextState = determineNextState(state.grid[y][x], neighbours);
+      if (nextState) {
+        state.liveCells++;
+      }
       line.push(nextState);
     }
     newGrid.push(line);

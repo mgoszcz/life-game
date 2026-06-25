@@ -5,7 +5,8 @@ import { createRandomGrid, state } from "../core/state";
 import { renderCanvas } from "./canvasRenderer";
 import { webGameConfig } from "./config";
 import { nextGeneration } from "../core/life";
-import { decreaseSpeed, increaseSpeed } from "./controls";
+import { decreaseSpeed, increaseSpeed, modeDown, modeUp } from "./controls";
+import { getModeNameById } from "../core/modes";
 
 const widthInput = document.querySelector<HTMLInputElement>("#widthInput")!;
 const heightInput = document.querySelector<HTMLInputElement>("#heightInput")!;
@@ -23,11 +24,28 @@ const pauseButton = document.querySelector<HTMLButtonElement>("#pauseButton")!;
 const speedValue = document.querySelector<HTMLSpanElement>("#speedValue")!;
 const generationValue =
   document.querySelector<HTMLSpanElement>("#generationValue")!;
+const pauseIndicator =
+  document.querySelector<HTMLDivElement>("#pauseIndicator")!;
+const liveCellsCounter =
+  document.querySelector<HTMLSpanElement>("#aliveCountValue")!;
+const modeUpButton = document.querySelector<HTMLButtonElement>("#modeUp")!;
+const modeDownButton = document.querySelector<HTMLButtonElement>("#modeDown")!;
+const modeDisplay = document.querySelector<HTMLDivElement>(".mode-selector")!;
 
 const canvas = document.querySelector<HTMLCanvasElement>("#game")!;
 const ctx = canvas.getContext("2d")!;
 
 gameLoop();
+
+// nadal UI jest odświeżane tylko przy obrocie pętli. Jeśli klikniesz speedUp, speedDown, modeUp albo modeDown w środku setTimeout, display może zmienić się dopiero po zakończeniu obecnego ticka.
+// Najczystszy kierunek: zrobić małą funkcję typu renderHud() i wołać ją:
+// w pętli po zmianie generacji/live cells,
+// po reset,
+// po restart,
+// bezpośrednio w handlerach speedUp/speedDown,
+// bezpośrednio w handlerach modeUp/modeDown,
+// po pauzie, jeśli chcesz mieć wszystko zsynchronizowane.
+// Czyli nie tylko pętla gry renderuje HUD, ale każdy event, który zmienia stan widoczny w HUD, od razu go odmalowuje. Wtedy UI przestaje zależeć od timingu symulacji.
 
 async function gameLoop() {
   while (1) {
@@ -43,6 +61,8 @@ async function resetLoop() {
     state.resetRequested = false;
     createRandomGrid(webGameConfig);
     renderCanvas(ctx);
+    liveCellsCounter.textContent = state.liveCells.toString();
+    generationValue.textContent = "0";
     await generationLoop();
   }
 }
@@ -50,6 +70,8 @@ async function resetLoop() {
 async function generationLoop() {
   let generation = 0;
   while (!state.newGameRequested && !state.resetRequested) {
+    modeDisplay.textContent = getModeNameById(state.mode);
+    speedValue.textContent = state.speed.toString();
     await new Promise((resolve) => setTimeout(resolve, state.speed));
     if (!state.isRunning) {
       continue;
@@ -57,7 +79,7 @@ async function generationLoop() {
     nextGeneration();
     generation++;
     generationValue.textContent = generation.toString();
-    speedValue.textContent = state.speed.toString();
+    liveCellsCounter.textContent = state.liveCells.toString();
     renderCanvas(ctx);
   }
 }
@@ -77,6 +99,19 @@ speedDownButton.addEventListener("click", () => {
 
 pauseButton.addEventListener("click", () => {
   state.isRunning = !state.isRunning;
+  if (state.isRunning) {
+    pauseIndicator?.classList.remove("on");
+  } else {
+    pauseIndicator?.classList.add("on");
+  }
+});
+
+modeUpButton.addEventListener("click", () => {
+  modeUp();
+});
+
+modeDownButton.addEventListener("click", () => {
+  modeDown();
 });
 
 restartButton.addEventListener("click", () => {
@@ -90,7 +125,8 @@ restartButton.addEventListener("click", () => {
   if (!isNaN(newHeight) && newHeight > 0) {
     webGameConfig.height = newHeight;
   }
-  const newAliveChance = parseFloat(aliveInput.value);
+  const newAliveChanceInt = parseInt(aliveInput.value);
+  const newAliveChance = newAliveChanceInt / 100;
   if (!isNaN(newAliveChance) && newAliveChance >= 0 && newAliveChance <= 1) {
     webGameConfig.aliveChance = newAliveChance;
   }

@@ -12,15 +12,22 @@
 
         <div class="panel-title">LIFE COMPUTER MK-I</div>
 
-        <div class="indicator-section">
-          <div class="indicator-group">
-            <span>POWER</span>
-            <div class="indicator on" id="powerIndicator"></div>
+        <div class="status-section">
+          <div class="indicator-section">
+            <div class="indicator-group">
+              <span>POWER</span>
+              <div class="indicator on" id="powerIndicator"></div>
+            </div>
+
+            <div class="indicator-group">
+              <span>PAUSE</span>
+              <div class="indicator" id="pauseIndicator"></div>
+            </div>
           </div>
 
-          <div class="indicator-group">
-            <span>PAUSE</span>
-            <div class="indicator" id="pauseIndicator"></div>
+          <div class="button-section">
+            <button id="resetButton">RESET</button>
+            <button id="pauseButton">PAUSE</button>
           </div>
         </div>
 
@@ -33,44 +40,55 @@
           </div>
         </div>
 
-        <div class="config-section">
-          <div class="config-row">
-            <span>W</span>
-            <input
-              id="widthInput"
-              type="number"
-              value="80"
-              min="10"
-              max="300"
-            />
+        <div class="system-config">
+          <div class="config-section">
+            <div class="config-inputs">
+              <div class="config-row">
+                <span>W</span>
+                <input
+                  id="widthInput"
+                  type="number"
+                  value="80"
+                  min="10"
+                  max="300"
+                />
+              </div>
+
+              <div class="config-row">
+                <span>H</span>
+                <input
+                  id="heightInput"
+                  type="number"
+                  value="50"
+                  min="10"
+                  max="200"
+                />
+              </div>
+
+              <div class="config-row">
+                <span>A%</span>
+                <input
+                  id="aliveInput"
+                  type="number"
+                  value="25"
+                  min="0"
+                  max="100"
+                />
+              </div>
+            </div>
+
+            <button id="restartButton">RESTART</button>
           </div>
 
-          <div class="config-row">
-            <span>H</span>
-            <input
-              id="heightInput"
-              type="number"
-              value="50"
-              min="10"
-              max="200"
-            />
+          <div class="mode-section">
+            <span>MODE</span>
+            <div class="mode-selector">RANDOM</div>
+
+            <div class="mode-buttons">
+              <button class="mode-button" type="button" id="modeUp">▲</button>
+              <button class="mode-button" type="button" id="modeDown">▼</button>
+            </div>
           </div>
-
-          <div class="config-row">
-            <span>A%</span>
-            <input id="aliveInput" type="number" value="25" min="0" max="100" />
-          </div>
-        </div>
-
-        <div class="mode-section">
-          <span>MODE</span>
-          <div class="mode-selector">RANDOM</div>
-        </div>
-
-        <div class="button-section">
-          <button id="restartButton">RESTART</button>
-          <button id="resetButton">RESET</button>
-          <button id="pauseButton">PAUSE</button>
         </div>
       </div>
 
