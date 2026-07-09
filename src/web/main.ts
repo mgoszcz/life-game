@@ -1,12 +1,12 @@
 // src/web/main.ts
 import "./styles.css";
 
-import { createRandomGrid, state } from "../core/state";
+import { createModelGrid, createRandomGrid, state } from "../core/state";
 import { renderCanvas } from "./canvasRenderer";
 import { webGameConfig } from "./config";
 import { nextGeneration } from "../core/life";
 import { decreaseSpeed, increaseSpeed, modeDown, modeUp } from "./controls";
-import { getModeNameById } from "../core/modes";
+import { GAME_MODES_IDS, getModeById } from "../core/modes";
 
 const widthInput = document.querySelector<HTMLInputElement>("#widthInput")!;
 const heightInput = document.querySelector<HTMLInputElement>("#heightInput")!;
@@ -35,6 +35,16 @@ const modeDisplay = document.querySelector<HTMLDivElement>(".mode-selector")!;
 const canvas = document.querySelector<HTMLCanvasElement>("#game")!;
 const ctx = canvas.getContext("2d")!;
 
+function generateGrid() {
+  if (state.mode === GAME_MODES_IDS.RANDOM) {
+    createRandomGrid(webGameConfig);
+  } else if (state.mode == GAME_MODES_IDS.USER) {
+    throw new Error("User Mode not supported");
+  } else {
+    createModelGrid(webGameConfig);
+  }
+}
+
 gameLoop();
 
 // nadal UI jest odświeżane tylko przy obrocie pętli. Jeśli klikniesz speedUp, speedDown, modeUp albo modeDown w środku setTimeout, display może zmienić się dopiero po zakończeniu obecnego ticka.
@@ -46,6 +56,7 @@ gameLoop();
 // bezpośrednio w handlerach modeUp/modeDown,
 // po pauzie, jeśli chcesz mieć wszystko zsynchronizowane.
 // Czyli nie tylko pętla gry renderuje HUD, ale każdy event, który zmienia stan widoczny w HUD, od razu go odmalowuje. Wtedy UI przestaje zależeć od timingu symulacji.
+// brak obsługi errorów
 
 async function gameLoop() {
   while (1) {
@@ -59,7 +70,7 @@ async function gameLoop() {
 async function resetLoop() {
   while (!state.newGameRequested) {
     state.resetRequested = false;
-    createRandomGrid(webGameConfig);
+    generateGrid();
     renderCanvas(ctx);
     liveCellsCounter.textContent = state.liveCells.toString();
     generationValue.textContent = "0";
@@ -70,7 +81,7 @@ async function resetLoop() {
 async function generationLoop() {
   let generation = 0;
   while (!state.newGameRequested && !state.resetRequested) {
-    modeDisplay.textContent = getModeNameById(state.mode);
+    modeDisplay.textContent = getModeById(state.mode).name;
     speedValue.textContent = state.speed.toString();
     await new Promise((resolve) => setTimeout(resolve, state.speed));
     if (!state.isRunning) {
