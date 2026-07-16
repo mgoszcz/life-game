@@ -2,7 +2,7 @@
 import "./styles.css";
 
 import { createModelGrid, createRandomGrid, state } from "../core/state";
-import { renderCanvas } from "./canvasRenderer";
+import { renderCanvas, renderCanvasError } from "./canvasRenderer";
 import { webGameConfig } from "./config";
 import { nextGeneration } from "../core/life";
 import { decreaseSpeed, increaseSpeed } from "./controls";
@@ -33,12 +33,13 @@ const modeDownButton = document.querySelector<HTMLButtonElement>("#modeDown")!;
 const modeDisplay = document.querySelector<HTMLDivElement>(".mode-selector")!;
 const autoSizeButton =
   document.querySelector<HTMLButtonElement>("#autoSizeButton")!;
-const configChangedStatus =
-  document.querySelector<HTMLDivElement>("#configChangedStatus")!;
-const panelRegion =
-  document.querySelector<HTMLDivElement>(".control-panel-region")!;
-const panelToggle =
-  document.querySelector<HTMLButtonElement>("#panelToggle")!;
+const configChangedStatus = document.querySelector<HTMLDivElement>(
+  "#configChangedStatus",
+)!;
+const panelRegion = document.querySelector<HTMLDivElement>(
+  ".control-panel-region",
+)!;
+const panelToggle = document.querySelector<HTMLButtonElement>("#panelToggle")!;
 const panelToggleLabel =
   panelToggle.querySelector<HTMLSpanElement>(".sr-only")!;
 
@@ -173,10 +174,18 @@ panelToggle.addEventListener("click", () => {
 });
 
 function generateGrid() {
-  if (state.mode === GAME_MODES_IDS.RANDOM) {
+  const mode = GAME_MODES.find(({ id }) => id === state.mode);
+
+  if (!mode) {
+    throw new Error(`Mode with id ${state.mode} does not exist.`);
+  }
+
+  if (mode.id === GAME_MODES_IDS.RANDOM) {
     createRandomGrid(webGameConfig);
-  } else if (state.mode == GAME_MODES_IDS.USER) {
-    throw new Error("User Mode not supported");
+  } else if (mode.id === GAME_MODES_IDS.USER) {
+    throw new Error("USER mode is not supported yet.");
+  } else if (mode.model === null) {
+    throw new Error(`${mode.name} mode does not have a model assigned.`);
   } else {
     createModelGrid(webGameConfig);
   }
@@ -193,7 +202,6 @@ gameLoop();
 // bezpośrednio w handlerach modeUp/modeDown,
 // po pauzie, jeśli chcesz mieć wszystko zsynchronizowane.
 // Czyli nie tylko pętla gry renderuje HUD, ale każdy event, który zmienia stan widoczny w HUD, od razu go odmalowuje. Wtedy UI przestaje zależeć od timingu symulacji.
-// brak obsługi errorów
 
 async function gameLoop() {
   while (1) {
@@ -207,11 +215,31 @@ async function gameLoop() {
 async function resetLoop() {
   while (!state.newGameRequested) {
     state.resetRequested = false;
-    generateGrid();
+    try {
+      generateGrid();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown configuration error.";
+
+      console.error("Could not generate the game grid:", error);
+      renderCanvasError(ctx, message);
+      liveCellsCounter.textContent = "0";
+      generationValue.textContent = "0";
+
+      await waitForGameRetry();
+      continue;
+    }
+
     renderCanvas(ctx);
     liveCellsCounter.textContent = state.liveCells.toString();
     generationValue.textContent = "0";
     await generationLoop();
+  }
+}
+
+async function waitForGameRetry() {
+  while (!state.newGameRequested && !state.resetRequested) {
+    await new Promise((resolve) => setTimeout(resolve, 100));
   }
 }
 
