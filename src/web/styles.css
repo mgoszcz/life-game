@@ -23,6 +23,17 @@ body {
   margin: 0 auto;
 }
 
+.control-panel-region {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  transition: grid-template-rows 420ms ease-in-out;
+}
+
+.control-panel-clip {
+  min-height: 0;
+  overflow: hidden;
+}
+
 .control-panel {
   position: relative;
   min-height: 110px;
@@ -43,6 +54,19 @@ body {
     inset 0 2px 8px rgba(255, 255, 255, 0.12),
     inset 0 -8px 18px rgba(0, 0, 0, 0.45),
     0 10px 28px rgba(0, 0, 0, 0.6);
+
+  transition:
+    transform 420ms ease-in-out,
+    opacity 300ms ease-in-out;
+}
+
+.control-panel-region.is-collapsed {
+  grid-template-rows: 0fr auto;
+}
+
+.control-panel-region.is-collapsed .control-panel {
+  transform: translateY(-100%);
+  opacity: 0;
 }
 
 .control-panel::before,
@@ -114,6 +138,57 @@ body {
 .mode-section {
   flex-direction: column;
   align-items: center;
+}
+
+.config-section {
+  display: grid;
+  grid-template-columns: auto auto;
+}
+
+.config-inputs {
+  grid-row: 1 / span 2;
+}
+
+.restart-control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+}
+
+.config-changed-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(208, 176, 122, 0.48);
+  font-size: 10px;
+  letter-spacing: 0.7px;
+  white-space: nowrap;
+  transition:
+    color 180ms ease,
+    text-shadow 180ms ease;
+}
+
+.config-changed-indicator {
+  width: 10px;
+  height: 10px;
+  border: 1px solid #251707;
+  border-radius: 50%;
+  background: #3a2104;
+  box-shadow: inset 0 0 4px #000;
+}
+
+.config-changed-status.is-changed {
+  color: #ffc14d;
+  text-shadow: 0 0 6px rgba(255, 154, 25, 0.72);
+}
+
+.config-changed-status.is-changed .config-changed-indicator {
+  background: #ff9819;
+  box-shadow:
+    0 0 7px #ff9819,
+    0 0 14px rgba(255, 152, 25, 0.8),
+    inset 0 0 3px #fff4d2;
 }
 
 .status-section {
@@ -212,6 +287,37 @@ input {
   padding: 0;
 }
 
+.auto-size-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 92px;
+}
+
+.auto-size-indicator {
+  width: 14px;
+  height: 14px;
+  border: 1px solid #160000;
+  border-radius: 50%;
+  background: #320000;
+  box-shadow: inset 0 0 5px #000;
+}
+
+.auto-size-button[aria-pressed="true"] .auto-size-indicator {
+  background: #ff2424;
+  box-shadow:
+    0 0 7px #ff2424,
+    0 0 14px #ff2424,
+    inset 0 0 3px #fff;
+}
+
+.config-inputs input:disabled {
+  color: #1e7314;
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
 button {
   background: linear-gradient(180deg, #b1132b, #700010);
 
@@ -240,6 +346,39 @@ button:active {
   box-shadow:
     inset 0 2px 4px rgba(0, 0, 0, 0.5),
     0 1px 0 #351b12;
+}
+
+.panel-toggle {
+  z-index: 1;
+  justify-self: center;
+  width: 64px;
+  height: 28px;
+  margin-top: 6px;
+  padding: 0;
+  border-radius: 0 0 12px 12px;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.panel-toggle span[aria-hidden="true"] {
+  display: inline-block;
+  transition: transform 420ms ease-in-out;
+}
+
+.control-panel-region.is-collapsed .panel-toggle span[aria-hidden="true"] {
+  transform: rotate(180deg);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .screen-header {
@@ -272,6 +411,14 @@ canvas {
   box-shadow:
     0 0 20px rgba(57, 255, 20, 0.4),
     inset 0 0 40px rgba(57, 255, 20, 0.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .control-panel-region,
+  .control-panel,
+  .panel-toggle span[aria-hidden="true"] {
+    transition: none;
+  }
 }
 
 @media (max-width: 900px) {

@@ -6,90 +6,125 @@
   </head>
   <body>
     <div class="app">
-      <div class="control-panel">
-        <div class="screw bottom-left"></div>
-        <div class="screw bottom-right"></div>
+      <div class="control-panel-region">
+        <div class="control-panel-clip">
+          <div class="control-panel" id="controlPanel">
+            <div class="screw bottom-left"></div>
+            <div class="screw bottom-right"></div>
 
-        <div class="panel-title">LIFE COMPUTER MK-I</div>
+            <div class="panel-title">LIFE COMPUTER MK-I</div>
 
-        <div class="status-section">
-          <div class="indicator-section">
-            <div class="indicator-group">
-              <span>POWER</span>
-              <div class="indicator on" id="powerIndicator"></div>
-            </div>
+            <div class="status-section">
+              <div class="indicator-section">
+                <div class="indicator-group">
+                  <span>POWER</span>
+                  <div class="indicator on" id="powerIndicator"></div>
+                </div>
 
-            <div class="indicator-group">
-              <span>PAUSE</span>
-              <div class="indicator" id="pauseIndicator"></div>
-            </div>
-          </div>
-
-          <div class="button-section">
-            <button id="resetButton">RESET</button>
-            <button id="pauseButton">PAUSE</button>
-          </div>
-        </div>
-
-        <div class="speed-section">
-          <span>SPEED</span>
-          <div class="speed-controls">
-            <button id="speedDownButton">◀</button>
-            <span class="display" id="speedValue">100</span>
-            <button id="speedUpButton">▶</button>
-          </div>
-        </div>
-
-        <div class="system-config">
-          <div class="config-section">
-            <div class="config-inputs">
-              <div class="config-row">
-                <span>W</span>
-                <input
-                  id="widthInput"
-                  type="number"
-                  value="80"
-                  min="10"
-                  max="300"
-                />
+                <div class="indicator-group">
+                  <span>PAUSE</span>
+                  <div class="indicator" id="pauseIndicator"></div>
+                </div>
               </div>
 
-              <div class="config-row">
-                <span>H</span>
-                <input
-                  id="heightInput"
-                  type="number"
-                  value="50"
-                  min="10"
-                  max="200"
-                />
-              </div>
-
-              <div class="config-row">
-                <span>A%</span>
-                <input
-                  id="aliveInput"
-                  type="number"
-                  value="25"
-                  min="0"
-                  max="100"
-                />
+              <div class="button-section">
+                <button id="resetButton">RESET</button>
+                <button id="pauseButton">PAUSE</button>
               </div>
             </div>
 
-            <button id="restartButton">RESTART</button>
-          </div>
+            <div class="speed-section">
+              <span>SPEED</span>
+              <div class="speed-controls">
+                <button id="speedDownButton">◀</button>
+                <span class="display" id="speedValue">100</span>
+                <button id="speedUpButton">▶</button>
+              </div>
+            </div>
 
-          <div class="mode-section">
-            <span>MODE</span>
-            <div class="mode-selector">RANDOM</div>
+            <div class="system-config">
+              <div class="config-section">
+                <div class="config-inputs">
+                  <div class="config-row">
+                    <span>W</span>
+                    <input
+                      id="widthInput"
+                      type="number"
+                      value="80"
+                      min="10"
+                      max="300"
+                    />
+                  </div>
 
-            <div class="mode-buttons">
-              <button class="mode-button" type="button" id="modeUp">▲</button>
-              <button class="mode-button" type="button" id="modeDown">▼</button>
+                  <div class="config-row">
+                    <span>H</span>
+                    <input
+                      id="heightInput"
+                      type="number"
+                      value="50"
+                      min="10"
+                      max="200"
+                    />
+                  </div>
+
+                  <div class="config-row">
+                    <span>A%</span>
+                    <input
+                      id="aliveInput"
+                      type="number"
+                      value="25"
+                      min="0"
+                      max="100"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  class="auto-size-button"
+                  id="autoSizeButton"
+                  type="button"
+                  aria-pressed="false"
+                >
+                  <span class="auto-size-indicator" aria-hidden="true"></span>
+                  <span>AUTO</span>
+                </button>
+
+                <div class="restart-control">
+                  <button id="restartButton">RESTART</button>
+                  <div class="config-changed-status" id="configChangedStatus">
+                    <span
+                      class="config-changed-indicator"
+                      aria-hidden="true"
+                    ></span>
+                    <span>CONFIG CHANGED</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mode-section">
+                <span>MODE</span>
+                <div class="mode-selector">RANDOM</div>
+
+                <div class="mode-buttons">
+                  <button class="mode-button" type="button" id="modeUp">▲</button>
+                  <button class="mode-button" type="button" id="modeDown">▼</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+
+        <button
+          class="panel-toggle"
+          id="panelToggle"
+          type="button"
+          aria-controls="controlPanel"
+          aria-expanded="true"
+          title="Ukryj panel sterowania"
+        >
+          <span aria-hidden="true">▲</span>
+          <span class="sr-only">Ukryj panel sterowania</span>
+        </button>
       </div>
 
       <div class="screen-header">
